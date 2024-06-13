@@ -4,10 +4,10 @@ import { AppError } from '../../errors/AppErrors';
 import { Bike } from '../Bike/Bike.model';
 import { TRental } from './Booking .interface';
 import { Rental } from './Booking.module';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 const createRentalIntoDB = async (id: string, payload: TRental) => {
-  payload.userId = id;
+  payload.userId = new Types.ObjectId(id);
 
   const bikeData = await Bike.findById(payload.bikeId);
   if (!bikeData?.isAvailable) {
