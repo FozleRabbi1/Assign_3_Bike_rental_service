@@ -16,11 +16,30 @@ const AddedBikeDataIntoDB = async (payload: TBike) => {
 };
 
 const getAllBikeFromDB = async () => {
-  const result = await Bike.find();
+  const result = await Bike.find({ isAvailable: { $ne: false } });
+  return result;
+};
+
+const updateBikeIntoDB = async (id: string, payload: Partial<TBike>) => {
+  const result = await Bike.findByIdAndUpdate(id, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return result;
+};
+
+const deleteBikeIntoDB = async (id: string) => {
+  const result = await Bike.findByIdAndUpdate(
+    id,
+    { isAvailable: false },
+    { new: true, runValidators: true },
+  );
   return result;
 };
 
 export const BikeServices = {
   AddedBikeDataIntoDB,
   getAllBikeFromDB,
+  updateBikeIntoDB,
+  deleteBikeIntoDB,
 };

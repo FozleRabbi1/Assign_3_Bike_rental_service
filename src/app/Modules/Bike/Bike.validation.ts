@@ -12,7 +12,20 @@ const BikeAddedSchema = z.object({
     brand: z.string(),
   }),
 });
+const BikeUpdateSchema = z.object({
+  body: z.object({
+    name: z.string().optional(),
+    description: z.string().optional(),
+    pricePerHour: z.number().optional(),
+    isAvailable: z.boolean().optional(),
+    cc: z.number().optional(),
+    year: z.number().optional(),
+    model: z.string().optional(),
+    brand: z.string().optional(),
+  }),
+});
 
 export const BikeValidationSchema = {
   BikeAddedSchema,
+  BikeUpdateSchema,
 };

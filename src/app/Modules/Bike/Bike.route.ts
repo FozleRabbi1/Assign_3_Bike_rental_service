@@ -12,7 +12,13 @@ router.post(
   validateRequest(BikeValidationSchema.BikeAddedSchema),
   BikeController.addedBike,
 );
-
+router.put(
+  '/:id',
+  Auth('admin'),
+  validateRequest(BikeValidationSchema.BikeUpdateSchema),
+  BikeController.updateBike,
+);
+router.delete('/:id', Auth('admin'), BikeController.deletedBike);
 router.get('/', BikeController.getAllBike);
 
 export const BikeRoute = router;
