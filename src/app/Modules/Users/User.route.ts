@@ -4,6 +4,7 @@ import { validateRequest } from '../../middleware/validateRequest';
 import { UserValidation } from './User.validation';
 import { AuthValidation } from '../Auth/Auth.AuthValidation';
 import { AuthController } from '../Auth/Auth.controller';
+import { Auth } from '../../middleware/auth';
 
 const router = express.Router();
 
@@ -19,4 +20,6 @@ router.post(
   AuthController.loginUser,
 );
 
-export const SignUpRoute = router;
+router.get('/', Auth('admin', 'user'), userController.getUser);
+
+export const UsersRoute = router;

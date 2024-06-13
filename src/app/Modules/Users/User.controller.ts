@@ -13,4 +13,16 @@ const createUser = catchAsync(async (req, res) => {
   });
 });
 
-export const userController = { createUser };
+const getUser = catchAsync(async (req, res) => {
+  const { email } = req.user;
+  const result = await UserService.getUserFormBD(email);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User logged in successfully',
+    data: result,
+  });
+});
+
+export const userController = { createUser, getUser };

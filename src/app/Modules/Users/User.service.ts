@@ -6,6 +6,12 @@ const createUserInto = async (payload: TUser) => {
   return result;
 };
 
+const getUserFormBD = async (email: string) => {
+  const result = await User.findOne({ email });
+  return result;
+};
+
 export const UserService = {
   createUserInto,
+  getUserFormBD,
 };

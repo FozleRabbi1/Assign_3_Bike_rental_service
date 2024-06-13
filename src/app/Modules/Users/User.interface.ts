@@ -6,3 +6,5 @@ export type TUser = {
   address: string;
   role: 'admin' | 'user';
 };
+
+export type TRole = 'admin' | 'user';
