@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 import { TRental } from './Booking .interface';
 
 const RentalSchema = new Schema<TRental>({
-  userId: { type: Schema.Types.ObjectId, ref: 'User' },
+  userId: { type: String, ref: 'User' },
   bikeId: { type: Schema.Types.ObjectId, ref: 'Bike', required: true },
   startTime: { type: Date },
   returnTime: { type: Date, default: null },

@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 
 export type TRental = {
-  userId: Types.ObjectId;
+  userId: string;
   bikeId: Types.ObjectId;
   startTime: Date;
   returnTime: Date;
