@@ -11,7 +11,16 @@ const getUserFormBD = async (email: string) => {
   return result;
 };
 
+const updateUserFormBD = async (email: string, payload: Partial<TUser>) => {
+  const result = await User.findOneAndUpdate({ email }, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return result;
+};
+
 export const UserService = {
   createUserInto,
   getUserFormBD,
+  updateUserFormBD,
 };

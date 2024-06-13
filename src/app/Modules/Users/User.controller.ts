@@ -16,13 +16,23 @@ const createUser = catchAsync(async (req, res) => {
 const getUser = catchAsync(async (req, res) => {
   const { email } = req.user;
   const result = await UserService.getUserFormBD(email);
-
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'User logged in successfully',
+    message: 'User profile retrieved successfully',
     data: result,
   });
 });
 
-export const userController = { createUser, getUser };
+const updateUser = catchAsync(async (req, res) => {
+  const { email } = req.user;
+  const result = await UserService.updateUserFormBD(email, req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Profile updated successfully',
+    data: result,
+  });
+});
+
+export const userController = { createUser, getUser, updateUser };

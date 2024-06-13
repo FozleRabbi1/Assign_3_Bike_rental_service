@@ -21,5 +21,11 @@ router.post(
 );
 
 router.get('/', Auth('admin', 'user'), userController.getUser);
+router.put(
+  '/',
+  Auth('admin', 'user'),
+  validateRequest(UserValidation.UserUpdateValidationSchema),
+  userController.updateUser,
+);
 
 export const UsersRoute = router;
