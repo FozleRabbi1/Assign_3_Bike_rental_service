@@ -50,6 +50,65 @@ const createRentalIntoDB = async (id: string, payload: TRental) => {
   }
 };
 
+const returnBikeCalculationIntoDB = async (id: string) => {
+  const rentalsData = await Rental.findById(id);
+  if (!rentalsData) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Rental not found');
+  }
+  const { startTime } = rentalsData;
+  const newData: Record<string, unknown> = {};
+  const newDate = new Date();
+  const startDateTime = new Date(startTime);
+
+  const timeDiffMilliseconds = newDate.getTime() - startDateTime.getTime();
+  const timeDiffHours = Math.floor(timeDiffMilliseconds / (1000 * 60 * 60));
+  const timeDiffMinutes = Math.floor(
+    (timeDiffMilliseconds % (1000 * 60 * 60)) / (1000 * 60),
+  );
+  const pricePerHour = 15;
+  const totalAmount =
+    timeDiffHours * pricePerHour + (timeDiffMinutes / 60) * pricePerHour;
+
+  newData.totalCost = totalAmount;
+  newData.returnTime = newDate;
+  newData.isReturned = false;
+
+  const session = await mongoose.startSession();
+  try {
+    await session.startTransaction();
+    const result = await Rental.findByIdAndUpdate(
+      id,
+      {
+        totalCost: totalAmount,
+        returnTime: newDate,
+        isReturned: true,
+      },
+      { new: true, session },
+    );
+    if (!result) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to calculate');
+    }
+
+    const bikeResult = await Bike.findByIdAndUpdate(
+      rentalsData.bikeId,
+      { isAvailable: true },
+      { new: true, session },
+    );
+    if (!bikeResult) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to calculate');
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
+    return result;
+  } catch (err: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error(err);
+  }
+};
+
 export const RentalService = {
   createRentalIntoDB,
+  returnBikeCalculationIntoDB,
 };
