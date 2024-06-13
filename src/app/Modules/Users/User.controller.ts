@@ -6,9 +6,9 @@ import { UserService } from './User.service';
 const createUser = catchAsync(async (req, res) => {
   const result = await UserService.createUserInto(req?.body);
   sendResponse(res, {
-    statusCode: httpStatus.OK,
+    statusCode: httpStatus.CREATED,
     success: true,
-    message: 'Course create successFully',
+    message: 'User registered successfully',
     data: result,
   });
 });
