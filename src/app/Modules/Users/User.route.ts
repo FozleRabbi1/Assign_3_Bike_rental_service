@@ -20,9 +20,9 @@ router.post(
   AuthController.loginUser,
 );
 
-router.get('/', Auth('admin', 'user'), userController.getUser);
+router.get('/me', Auth('admin', 'user'), userController.getUser);
 router.put(
-  '/',
+  '/me',
   Auth('admin', 'user'),
   validateRequest(UserValidation.UserUpdateValidationSchema),
   userController.updateUser,
