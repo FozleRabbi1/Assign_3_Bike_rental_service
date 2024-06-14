@@ -21,8 +21,6 @@ const loginUserService = async (paylod: TLoginUser) => {
     throw new AppError(httpStatus.FORBIDDEN, 'password is not matched');
   }
 
-  console.log(userData.id);
-
   const jwtPayload = {
     // id: userData?.id.toString(),
     id: userData.id,

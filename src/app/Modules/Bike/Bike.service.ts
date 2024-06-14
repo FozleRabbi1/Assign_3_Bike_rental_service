@@ -21,6 +21,10 @@ const getAllBikeFromDB = async () => {
 };
 
 const updateBikeIntoDB = async (id: string, payload: Partial<TBike>) => {
+  const isExists = await Bike.findById(id);
+  if (!isExists) {
+    throw new AppError(httpStatus.NOT_FOUND, 'No Data Found');
+  }
   const result = await Bike.findByIdAndUpdate(id, payload, {
     new: true,
     runValidators: true,
@@ -29,6 +33,11 @@ const updateBikeIntoDB = async (id: string, payload: Partial<TBike>) => {
 };
 
 const deleteBikeIntoDB = async (id: string) => {
+  const isExists = await Bike.findById(id);
+  if (!isExists) {
+    throw new AppError(httpStatus.NOT_FOUND, 'No Data Found');
+  }
+
   const result = await Bike.findByIdAndUpdate(
     id,
     { isAvailable: false },
