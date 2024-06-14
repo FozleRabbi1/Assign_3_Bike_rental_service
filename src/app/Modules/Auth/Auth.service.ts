@@ -10,7 +10,7 @@ const loginUserService = async (paylod: TLoginUser) => {
   const userData = await User.findOne({ email: paylod.email });
 
   if (!userData) {
-    throw new AppError(httpStatus.NOT_FOUND, 'User is not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'No Data Found');
   }
   const isPasswordMatched = await bcrypt.compare(
     paylod?.password,

@@ -19,11 +19,14 @@ export const Auth = (...requiredRole: TRole[]) => {
     const { email, role } = decoded;
     const isUserExists = await User.findOne({ email });
     if (!isUserExists) {
-      throw new AppError(httpStatus.NOT_FOUND, 'User is not found');
+      throw new AppError(httpStatus.NOT_FOUND, 'No Data Found');
     }
 
     if (requiredRole && !requiredRole.includes(role)) {
-      throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorize!!!');
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        'You have no access to this route!!!',
+      );
     }
 
     req.user = decoded as JwtPayload;

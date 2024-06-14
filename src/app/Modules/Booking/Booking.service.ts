@@ -8,21 +8,18 @@ import mongoose, { Types } from 'mongoose';
 
 const createRentalIntoDB = async (id: string, payload: TRental) => {
   payload.userId = new Types.ObjectId(id);
-
   const bikeData = await Bike.findById(payload.bikeId);
   if (!bikeData?.isAvailable) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This bike is not available');
   }
-
   if (!bikeData) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This bike is not available');
   }
-
   const isAxists = await Rental.findOne({ bikeId: payload.bikeId });
-  if (isAxists) {
+  const isReturned = isAxists?.isReturned;
+  if (isAxists && !isReturned) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This bike is already booked');
   }
-
   const session = await mongoose.startSession();
   try {
     await session.startTransaction();
@@ -30,7 +27,6 @@ const createRentalIntoDB = async (id: string, payload: TRental) => {
     if (!result) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Booking Failed!');
     }
-
     const isAvailable = await Bike.findByIdAndUpdate(
       payload.bikeId,
       { isAvailable: false },
@@ -39,7 +35,6 @@ const createRentalIntoDB = async (id: string, payload: TRental) => {
     if (!isAvailable) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Booking Failed!!');
     }
-
     await session.commitTransaction();
     await session.endSession();
     return result;
@@ -53,13 +48,15 @@ const createRentalIntoDB = async (id: string, payload: TRental) => {
 const returnBikeCalculationIntoDB = async (id: string) => {
   const rentalsData = await Rental.findById(id);
   if (!rentalsData) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Rental not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'No Data Found');
+  }
+  if (rentalsData.isReturned) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'This bike is already returned');
   }
   const { startTime } = rentalsData;
   const newData: Record<string, unknown> = {};
   const newDate = new Date();
   const startDateTime = new Date(startTime);
-
   const timeDiffMilliseconds = newDate.getTime() - startDateTime.getTime();
   const timeDiffHours = Math.floor(timeDiffMilliseconds / (1000 * 60 * 60));
   const timeDiffMinutes = Math.floor(
@@ -88,7 +85,6 @@ const returnBikeCalculationIntoDB = async (id: string) => {
     if (!result) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to calculate');
     }
-
     const bikeResult = await Bike.findByIdAndUpdate(
       rentalsData.bikeId,
       { isAvailable: true },
@@ -97,7 +93,6 @@ const returnBikeCalculationIntoDB = async (id: string) => {
     if (!bikeResult) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to calculate');
     }
-
     await session.commitTransaction();
     await session.endSession();
     return result;
@@ -108,7 +103,16 @@ const returnBikeCalculationIntoDB = async (id: string) => {
   }
 };
 
+const myRentalsFromDB = async (id: string) => {
+  const result = await Rental.find({ userId: id });
+  if (result.length === 0) {
+    throw new AppError(httpStatus.NOT_FOUND, 'No Data Found');
+  }
+  return result;
+};
+
 export const RentalService = {
   createRentalIntoDB,
+  myRentalsFromDB,
   returnBikeCalculationIntoDB,
 };
