@@ -4,7 +4,7 @@ import { TErrorSource, TGenericErrorResponse } from '../interface/error';
 export const handelValidationError = (
   err: mongoose.Error.ValidationError,
 ): TGenericErrorResponse => {
-  const errorSources: TErrorSource = Object.values(err.errors).map((value) => {
+  const errorMessages: TErrorSource = Object.values(err.errors).map((value) => {
     return {
       path: value?.path,
       message: value?.message,
@@ -15,6 +15,6 @@ export const handelValidationError = (
   return {
     statusCode,
     message: 'Validation Error',
-    errorSources,
+    errorMessages,
   };
 };

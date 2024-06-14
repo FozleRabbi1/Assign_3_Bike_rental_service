@@ -9,7 +9,7 @@ const handelDuplicateError = (err: any): TGenericErrorResponse => {
     duplicateKey = match[2]; // Extracted key name
     duplicateValue = match[3]; // Extracted duplicate value
   }
-  const errorSources = [
+  const errorMessages = [
     {
       path: duplicateKey,
       message: ` "${duplicateValue}" is already exists`,
@@ -20,7 +20,7 @@ const handelDuplicateError = (err: any): TGenericErrorResponse => {
   return {
     statusCode,
     message: 'this department is already exists',
-    errorSources,
+    errorMessages,
   };
 };
 export default handelDuplicateError;
